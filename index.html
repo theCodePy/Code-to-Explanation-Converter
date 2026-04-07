@@ -247,8 +247,15 @@
 
     <div class="container">
         <div class="pane">
-            <h3>Input Code</h3>
-            <textarea id="codeInput" placeholder="// Paste your C, Python, or Java code here..."></textarea>
+            <h3>Settings & Input</h3>
+            <textarea id="codeInput" placeholder="// Paste your C, Python, or Java code here..."></textarea><br>
+            <div style="margin-bottom: 20px;">
+                <label for="apiKeyInput" style="font-size: 0.9rem; font-weight: 600; color: #4a5568;">Google AI API Key:</label>
+                <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." 
+                       style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+                <div style="font-size: 0.8rem; color: #718096; margin-top: 5px;">Your key is saved locally in your browser and never sent to our servers.</div>
+            </div>
+
             <button onclick="generateExplanation()">Analyze & Explain</button>
             <div id="loadingIndicator" class="loading">Analyzing code syntax... Please wait.</div>
         </div>
@@ -260,8 +267,6 @@
     </div>
 
     <script>
-        // --- PUT THE API KEY HERE ---
-        const API_KEY = 'AIzaSyCjWo8UQ5FAS-tunktqfYQOTFsNI6YQjqA'; 
 
         // Simple Markdown Formatter to make the AI output look pretty
         function formatMarkdown(text) {
@@ -275,16 +280,40 @@
             return html;
         }
 
+        // Run this when the page loads to check if they already entered a key
+        window.onload = () => {
+            const savedKey = localStorage.getItem('geminiApiKey');
+            if (savedKey) {
+                document.getElementById('apiKeyInput').value = savedKey;
+            }
+        };
+
+        // ... (Keep your formatMarkdown function exactly the same) ...
+
         async function generateExplanation() {
+            // Get the key dynamically from the input box
+            const API_KEY = document.getElementById('apiKeyInput').value.trim();
             const code = document.getElementById('codeInput').value;
             const outputDiv = document.getElementById('output');
             const loadingDiv = document.getElementById('loadingIndicator');
 
+            if (!API_KEY) {
+                alert("Please enter your Google API Key first!");
+                return;
+            }
             if (!code.trim()) {
                 alert("Please paste some code first!");
                 return;
             }
 
+            // Save the key to localStorage so they don't have to type it again
+            localStorage.setItem('geminiApiKey', API_KEY);
+
+            // UI updates
+            outputDiv.innerHTML = "";
+            loadingDiv.style.display = "block";
+
+            // ... (The rest of the try/catch API fetch block remains exactly the same!) ...
             // UI updates
             outputDiv.innerHTML = "";
             loadingDiv.style.display = "block";
