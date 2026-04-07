@@ -232,6 +232,38 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 15px; /* Reduce outer padding for smaller screens */
+            }
+
+            .container {
+                flex-direction: column; /* Stack the input and output panes vertically */
+                gap: 20px; 
+            }
+
+            .pane {
+                padding: 20px; /* Reduce internal padding of the panes */
+            }
+
+            h1 {
+                font-size: 1.8rem; /* Scale down the main title */
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            textarea, #output {
+                height: 300px; /* Reduce height so it fits nicely on a phone screen */
+                padding: 15px;
+            }
+
+            button {
+                padding: 14px 20px; 
+            }
+        }
     </style>
 </head>
 <body>
