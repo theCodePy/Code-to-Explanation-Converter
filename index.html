@@ -5,23 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code-to-Explanation Converter</title>
     <link rel="icon" type="image/x-icon" href="./brainwarelogo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Color Palette & Variables */
+        /* Cute Coding Color Palette & Variables */
         :root {
-            --primary-color: #0056b3; /* Brainware Blue */
-            --primary-hover: #004494;
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4ebf5 100%);
-            --pane-bg: #ffffff;
-            --text-main: #2d3748;
-            --text-muted: #718096;
-            --border-color: #e2e8f0;
-            --code-bg: #1e1e1e; /* Dark theme for the code editor */
+            --primary-color: #ff6b9e; /* Cute bright pink */
+            --primary-hover: #ff4785;
+            --bg-gradient: linear-gradient(135deg, #ffe6ea 0%, #f0e6ff 100%); /* Pastel pink to lavender */
+            --pane-bg: rgba(255, 255, 255, 0.85); /* Glassmorphism white */
+            --text-main: #4a4a4a;
+            --text-muted: #8a7b96;
+            --border-color: #ffd1dc;
+            --code-bg: #282a36; /* Dark theme for the code editor (Dracula) */
+            --code-text: #f8f8f2;
+            --accent-cyan: #8be9fd;
+            --accent-pink: #ff79c6;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             background: var(--bg-gradient);
+            /* Cute subtle dot pattern overlay */
+            background-image: radial-gradient(#ffc2d1 2px, transparent 2px);
+            background-size: 30px 30px;
             color: var(--text-main);
             margin: 0;
             padding: 40px 20px;
@@ -31,49 +37,69 @@
             min-height: 100vh;
         }
 
-        /* Header Styling */
+        /* Header Styling with Floating Animation */
         .header-section {
             text-align: center;
-            margin-bottom: 30px;
-            animation: fadeInDown 0.8s ease-out;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out;
         }
 
         .header-section img {
             width: 90px;
             height: auto;
             margin-bottom: 15px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 8px 12px rgba(255, 107, 158, 0.3));
+            animation: float 3s ease-in-out infinite; /* Floating effect */
         }
 
         h1 { 
             color: var(--primary-color);
             margin: 0 0 10px 0;
             font-weight: 700;
-            font-size: 2.5rem;
-            letter-spacing: -0.5px;
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 0px #fff, 4px 4px 0px rgba(255, 107, 158, 0.2);
         }
 
-        .subtitle {
-            font-size: 1.1rem;
+        /* Typewriter Subtitle Container */
+        .subtitle-container {
+            font-size: 1.2rem;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            height: 30px; /* Keeps layout stable during typing */
         }
 
-        /* Custom Badge for Anuska */
+        .typewriter-text {
+            color: #b088f9; /* Pastel purple */
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            background-color: var(--primary-color);
+            margin-left: 2px;
+            animation: blink 0.8s infinite;
+        }
+
+        /* Custom Badge */
         .credit-badge {
             display: inline-block;
-            background: white;
+            background: linear-gradient(120deg, #fff, #fff0f5);
             padding: 8px 24px;
             border-radius: 50px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 107, 158, 0.15);
+            border: 2px solid var(--border-color);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .credit-badge:hover {
+            transform: scale(1.1) rotate(-2deg);
         }
 
         .credit-badge b {
-            color: #e53e3e; /* A pop of red to stand out */
-            font-weight: 600;
+            color: var(--primary-color);
         }
 
         /* Layout */
@@ -82,86 +108,109 @@
             width: 100%;
             max-width: 1300px;
             gap: 30px;
-            animation: fadeInUp 0.8s ease-out;
+            animation: fadeInUp 1s ease-out;
         }
 
-        /* Individual Panels */
+        /* Glassmorphism Panels */
         .pane {
             flex: 1;
             background: var(--pane-bg);
+            backdrop-filter: blur(10px);
             padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(200, 150, 200, 0.15);
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(255,255,255,0.8);
+            border: 2px solid rgba(255, 255, 255, 0.6);
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        /* Subtle top border accent */
+        .pane:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 107, 158, 0.2);
+        }
+
+        /* Cute Top Border Accent */
         .pane::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), #4299e1);
+            top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
         }
 
         h3 {
             margin-top: 0;
             margin-bottom: 15px;
-            color: var(--text-main);
-            font-size: 1.25rem;
-            font-weight: 600;
+            color: #9d4edd; /* Deep purple */
+            font-size: 1.4rem;
+            font-weight: 700;
         }
 
-        /* Input Code Area (Dark Theme) */
+        /* Input Code Area (Dark Coding Theme) */
         textarea {
             width: 100%;
             height: 400px;
             padding: 20px;
             background-color: var(--code-bg);
-            color: #d4d4d4; /* Light gray text for visibility */
-            border: 2px solid transparent;
-            border-radius: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 15px;
+            color: var(--code-text);
+            border: 3px solid transparent;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
             resize: none;
             box-sizing: border-box;
             transition: all 0.3s ease;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.3);
         }
 
         textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.15);
+            box-shadow: 0 0 15px rgba(255, 107, 158, 0.3);
         }
 
-        /* Primary Action Button */
+        /* Fun Input Field */
+        input[type="password"] {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fff9fa;
+            border: 2px solid var(--border-color) !important;
+            transition: all 0.3s;
+        }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #b088f9 !important;
+            box-shadow: 0 0 10px rgba(176, 136, 249, 0.3);
+        }
+
+        /* Bouncy Primary Action Button */
         button {
             margin-top: 20px;
             padding: 16px 30px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, #ff8c42 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
             width: 100%;
-            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.25);
-            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(255, 107, 158, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         button:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 86, 179, 0.35);
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 12px 25px rgba(255, 107, 158, 0.4);
+            background: linear-gradient(135deg, #ff8c42 0%, var(--primary-color) 100%);
         }
 
         button:active {
-            transform: translateY(1px);
+            transform: scale(0.95);
         }
 
         /* Output Area */
@@ -172,97 +221,85 @@
             white-space: pre-wrap;
             line-height: 1.7;
             font-size: 15.5px;
-            background-color: #f8fafc;
-            color: #334155;
+            background-color: #fffafb;
+            color: #555;
             padding: 25px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            border-radius: 12px;
+            border: 2px dashed var(--border-color);
         }
 
         /* Formatted Output Elements generated by JS */
-        #output strong { color: #1a202c; font-weight: 700; }
+        #output strong { color: var(--primary-hover); font-weight: 700; }
         #output code.inline-code { 
-            background: #edf2f7; 
-            padding: 2px 6px; 
-            border-radius: 4px; 
-            font-family: monospace; 
-            color: #e53e3e; 
+            background: #f0e6ff; 
+            padding: 3px 8px; 
+            border-radius: 6px; 
+            font-family: 'Fira Code', monospace; 
+            color: #9d4edd; 
             font-size: 0.9em;
+            font-weight: 600;
         }
         #output .code-block {
             background: var(--code-bg);
-            color: #fff;
+            color: var(--code-text);
             padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
+            border-radius: 10px;
+            font-family: 'Fira Code', monospace;
             overflow-x: auto;
             margin: 10px 0;
+            border-left: 4px solid var(--accent-pink);
         }
 
-        /* Custom Scrollbar for Textarea & Output */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ffb6c1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
 
         /* Loading Animation */
         .loading { 
             display: none; 
             color: var(--primary-color); 
-            font-weight: 600; 
+            font-weight: 700; 
             text-align: center; 
             margin-top: 15px;
-            animation: pulse 1.5s infinite;
+            animation: pulse 1s infinite alternate;
         }
 
-        /* CSS Animations */
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
         @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+            from { opacity: 0.6; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1.02); }
         }
 
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            body {
-                padding: 20px 15px; /* Reduce outer padding for smaller screens */
-            }
-
-            .container {
-                flex-direction: column; /* Stack the input and output panes vertically */
-                gap: 20px; 
-            }
-
-            .pane {
-                padding: 20px; /* Reduce internal padding of the panes */
-            }
-
-            h1 {
-                font-size: 1.8rem; /* Scale down the main title */
-            }
-
-            .subtitle {
-                font-size: 0.95rem;
-            }
-
-            textarea, #output {
-                height: 300px; /* Reduce height so it fits nicely on a phone screen */
-                padding: 15px;
-            }
-
-            button {
-                padding: 14px 20px; 
-            }
+            body { padding: 20px 15px; background-size: 20px 20px; }
+            .container { flex-direction: column; gap: 20px; }
+            h1 { font-size: 2rem; }
+            .subtitle-container { font-size: 1rem; }
+            textarea, #output { height: 300px; }
         }
     </style>
 </head>
@@ -271,90 +308,129 @@
     <div class="header-section">
         <img src="./brainwarelogo.png" alt="Brainware University Logo">
         <h1>Code-to-Explanation Converter</h1>
-        <div class="subtitle">Paste your code snippet below to get an AI-generated academic breakdown.</div>
+        
+        <div class="subtitle-container">
+            <span class="typewriter-text" id="typewriter"></span><span class="cursor"></span>
+        </div>
+
         <div class="credit-badge">
-            Developed by <b>Anuska Kar</b>
+            Developed by <b>Anuska Kar</b> 👩‍💻✨
         </div>
     </div>
 
     <div class="container">
         <div class="pane">
-            <h3>Settings & Input</h3>
-            <textarea id="codeInput" placeholder="// Paste your C, Python, or Java code here..."></textarea><br>
+            <h3>⚙️ Settings & Input</h3>
             <div style="margin-bottom: 20px;">
-                <label for="apiKeyInput" style="font-size: 0.9rem; font-weight: 600; color: #4a5568;">Google AI API Key:</label>
+                <label for="apiKeyInput" style="font-size: 0.95rem; font-weight: 700; color: #9d4edd;">Google AI API Key 🔑:</label>
                 <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." 
-                       style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
-                <div style="font-size: 0.8rem; color: #718096; margin-top: 5px;">Your key is saved locally in your browser and never sent to our servers.</div>
+                       style="width: 100%; padding: 12px; margin-top: 8px; border: 2px solid #ccc; border-radius: 8px; box-sizing: border-box;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">Your key is saved safely in your browser! 💖</div>
             </div>
-
-            <button onclick="generateExplanation()">Analyze & Explain</button>
-            <div id="loadingIndicator" class="loading">Analyzing code syntax... Please wait.</div>
+            <textarea id="codeInput" placeholder="// Paste your C, Python, or Java code here...&#10;// And watch the magic happen! ✨"></textarea><br>
+            <button onclick="generateExplanation()">Analyze & Explain 🚀</button>
+            <div id="loadingIndicator" class="loading">Reading your code... Please wait! 🎀</div>
         </div>
 
         <div class="pane">
-            <h3>AI Explanation</h3>
+            <h3>💡 AI Explanation</h3>
             <div id="output">The structured academic explanation will appear here...</div>
         </div>
     </div>
 
-    <script>
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px dashed #ffd1dc; color: var(--text-muted); font-size: 0.95rem; width: 100%; max-width: 1200px; font-weight: 600;">
+        <p style="margin: 5px 0;">This tool was developed under the guidance of <b style="color: #9d4edd;">Mr. Samudranil Maity</b>, Assistant Professor.</p>
+        <p style="margin: 5px 0;">Department of Cyber Science & Technology, <b style="color: #ff6b9e;">Brainware University</b>.</p>
+    </div>
 
-        // Simple Markdown Formatter to make the AI output look pretty
-        function formatMarkdown(text) {
-            let html = text;
-            // Format Code Blocks
-            html = html.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>');
-            // Format Inline Code
-            html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-            // Format Bold Text
-            html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
-            return html;
+    <script>
+        // --- TYPEWRITER ANIMATION LOGIC ---
+        const phrases = [
+            "Paste your code snippet below... 📝",
+            "Let AI explain the logic step-by-step! 🧠",
+            "Understand complex syntax easily... 🌸",
+            "Your personal coding tutor is ready! 👩‍💻✨"
+        ];
+        
+        let currentPhraseIndex = 0;
+        let currentCharIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 100;
+
+        function typeWriterEffect() {
+            const currentPhrase = phrases[currentPhraseIndex];
+            const displayElement = document.getElementById("typewriter");
+
+            if (isDeleting) {
+                displayElement.textContent = currentPhrase.substring(0, currentCharIndex - 1);
+                currentCharIndex--;
+                typingSpeed = 50; // Deleting is faster
+            } else {
+                displayElement.textContent = currentPhrase.substring(0, currentCharIndex + 1);
+                currentCharIndex++;
+                typingSpeed = 100; // Normal typing speed
+            }
+
+            // If finished typing the phrase
+            if (!isDeleting && currentCharIndex === currentPhrase.length) {
+                isDeleting = true;
+                typingSpeed = 2000; // Pause before deleting
+            } 
+            // If finished deleting the phrase
+            else if (isDeleting && currentCharIndex === 0) {
+                isDeleting = false;
+                currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+                typingSpeed = 500; // Pause before typing next phrase
+            }
+
+            setTimeout(typeWriterEffect, typingSpeed);
         }
 
-        // Run this when the page loads to check if they already entered a key
+        // Run this when the page loads
         window.onload = () => {
+            // Start the typewriter animation
+            typeWriterEffect();
+
+            // Check if they already entered a key
             const savedKey = localStorage.getItem('geminiApiKey');
             if (savedKey) {
                 document.getElementById('apiKeyInput').value = savedKey;
             }
         };
 
-        // ... (Keep your formatMarkdown function exactly the same) ...
+        // --- AI API LOGIC ---
+
+        function formatMarkdown(text) {
+            let html = text;
+            html = html.replace(/```([\s\S]*?)```/g, '<div class="code-block">$1</div>');
+            html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            html = html.replace(/\*\*([^\*]+)\*\*/g, '<strong>$1</strong>');
+            return html;
+        }
 
         async function generateExplanation() {
-            // Get the key dynamically from the input box
             const API_KEY = document.getElementById('apiKeyInput').value.trim();
             const code = document.getElementById('codeInput').value;
             const outputDiv = document.getElementById('output');
             const loadingDiv = document.getElementById('loadingIndicator');
 
             if (!API_KEY) {
-                alert("Please enter your Google API Key first!");
+                alert("Please enter your Google API Key first! 🔑");
                 return;
             }
             if (!code.trim()) {
-                alert("Please paste some code first!");
+                alert("Please paste some code first! 📝");
                 return;
             }
 
-            // Save the key to localStorage so they don't have to type it again
             localStorage.setItem('geminiApiKey', API_KEY);
 
-            // UI updates
             outputDiv.innerHTML = "";
             loadingDiv.style.display = "block";
 
-            // ... (The rest of the try/catch API fetch block remains exactly the same!) ...
-            // UI updates
-            outputDiv.innerHTML = "";
-            loadingDiv.style.display = "block";
-
-            // The hardcoded educational prompt
-            const systemPrompt = "You are a strict computer science professor. Analyze the following code. 1. Identify the language. 2. Explain the overall logic step-by-step for a beginner. 3. Point out any complex syntax (like pointers or specific libraries). Keep the output clean and easy to read. Here is the code:\n\n";
+            const systemPrompt = "You are a strict but friendly computer science professor. Analyze the following code. 1. Identify the language. 2. Explain the overall logic step-by-step for a beginner. 3. Point out any complex syntax (like pointers or specific libraries). Keep the output clean, easy to read, and encouraging. Here is the code:\n\n";
 
             try {
-                // FIX 1: Updated the model endpoint to gemini-2.5-flash
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -365,25 +441,19 @@
 
                 const data = await response.json();
                 
-                // FIX 2: Intercept API-level errors (like 404s or invalid keys) before parsing
                 if (data.error) {
                     throw new Error(`API Error ${data.error.code}: ${data.error.message}`);
                 }
                 
-                // Extracting and formatting the text from a successful response
                 const rawExplanation = data.candidates[0].content.parts[0].text;
                 outputDiv.innerHTML = formatMarkdown(rawExplanation);
 
             } catch (error) {
-                outputDiv.innerHTML = `<span style="color:red;">Error connecting to the AI: ${error.message}</span>`;
+                outputDiv.innerHTML = `<span style="color:red; font-weight:bold;">Oops! Error connecting to the AI: ${error.message}</span>`;
             } finally {
                 loadingDiv.style.display = "none";
             }
         }
     </script>
-    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #718096; font-size: 0.9rem; width: 100%; max-width: 1200px;">
-        <p style="margin: 5px 0;">This tool was developed under the guidance of <b>Mr. Samudranil Maity</b>. Assistance professor</p>
-        <p style="margin: 5px 0;">Department of Cyber Science & Technology, <b>Brainware University</b>.</p>
-    </div>
 </body>
 </html>
